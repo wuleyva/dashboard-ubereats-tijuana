@@ -98,7 +98,7 @@ df_tijuana = df[
 if not df_tijuana.empty:
     heat_data = df_tijuana[["Latitud", "Longitud"]].values.tolist()
     HeatMap(heat_data, radius=12, blur=15, max_zoom=1).add_to(m)
-    st_folium(m)
+    st_folium(m, width=700, height=500)  # Ajusta tamaño del mapa
 else:
     st.warning("⚠️ No se encontraron coordenadas dentro de Tijuana.")
 
