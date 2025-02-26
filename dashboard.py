@@ -52,30 +52,19 @@ ax.set_xlabel("Puntaje Ponderado (0 a 5)")
 ax.set_ylabel("Restaurante")
 st.pyplot(fig)
 
-# 🔹 Sección 2: Gráfico de Dispersión - Calificación vs. Número de Opiniones (Top 100)
-st.header("📌 Calificación vs. Cantidad de Restaurantes (Top 100)")
-st.write(
-    "Este gráfico de dispersión representa la **relación entre la calificación y "
-    "el número de restaurantes** en el Top 100. Cada punto representa la cantidad "
-    "de restaurantes con una calificación específica."
-)
+# 🔹 Sección 2: Histograma - Frecuencia de Calificaciones
+st.header("📊 Distribución de Calificaciones")
 
 fig, ax = plt.subplots(figsize=(10, 6))
-calificacion_counts = top_100_restaurantes["Calificación"].value_counts().sort_index()
-sns.scatterplot(
-    x=calificacion_counts.index,
-    y=calificacion_counts.values,
-    size=calificacion_counts.values,
-    hue=calificacion_counts.values,
-    palette="plasma",
-    sizes=(50, 500),
-    alpha=0.9,
-    edgecolor="black"
-)
-ax.set_title("Calificación vs. Cantidad de Restaurantes (Top 100)", fontsize=14, fontweight="bold")
+sns.histplot(df["Calificación"], bins=20, kde=True, color="royalblue", edgecolor="black", alpha=0.7)
+
+ax.set_title("Distribución de Calificaciones de los Restaurantes", fontsize=14, fontweight="bold")
 ax.set_xlabel("Calificación", fontsize=12)
-ax.set_ylabel("Número de Restaurantes", fontsize=12)
+ax.set_ylabel("Frecuencia", fontsize=12)
+ax.grid(axis="y", linestyle="--", alpha=0.7)
+
 st.pyplot(fig)
+
 
 # 🔹 Sección 3: Mapa de Calor de Restaurantes en Tijuana
 st.header("📍 Mapa de Calor de Restaurantes en Tijuana")
