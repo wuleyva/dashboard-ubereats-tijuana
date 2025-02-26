@@ -55,6 +55,15 @@ st.pyplot(fig)
 # 🔹 Sección 2: Histograma - Frecuencia de Calificaciones
 st.header("📊 Distribución de Calificaciones")
 
+st.write(
+    "Este histograma muestra la distribución de las calificaciones otorgadas "
+    "a los restaurantes en Uber Eats dentro de Tijuana. La mayoría de los restaurantes "
+    "tienen calificaciones entre 4.0 y 4.8, lo que indica un alto nivel de satisfacción "
+    "entre los clientes. La curva de densidad (línea azul) permite visualizar "
+    "la tendencia general de las puntuaciones."
+)
+
+
 fig, ax = plt.subplots(figsize=(10, 6))
 sns.histplot(df["Calificación"], bins=20, kde=True, color="royalblue", edgecolor="black", alpha=0.7)
 
