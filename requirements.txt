@@ -1,7 +1,7 @@
-streamlit
+streamlit==1.31.1
+folium==0.14.0
+branca==0.6.0
 pandas
-numpy
-matplotlib
 seaborn
-folium
-streamlit_folium
+matplotlib
+streamlit-folium
