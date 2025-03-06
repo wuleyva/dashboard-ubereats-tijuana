@@ -8,23 +8,46 @@ from streamlit_folium import st_folium
 from folium.plugins import HeatMap
 import os
 
-# ✅ Cargar el dataset
+
+# 📌 Cargar datos
 df = pd.read_csv("restaurantes_ubereats_tijuana_final_v4.csv")
 
-# ✅ Limpiar columnas necesarias
+# ✅ Conversión de tipos de datos
 df["Número de Opiniones"] = pd.to_numeric(df["Número de Opiniones"], errors="coerce")
 df["Calificación"] = pd.to_numeric(df["Calificación"], errors="coerce")
 df["Latitud"] = pd.to_numeric(df["Latitud"], errors="coerce")
 df["Longitud"] = pd.to_numeric(df["Longitud"], errors="coerce")
-df = df.dropna(subset=["Número de Opiniones", "Calificación", "Latitud", "Longitud"])
 
-# ✅ Calcular puntaje ponderado
+# ✅ Eliminar registros con datos faltantes esenciales
+df.dropna(subset=["Nombre", "Categoría", "Calificación", "Número de Opiniones", "Latitud", "Longitud"], inplace=True)
+
+# ✅ Filtrar solo coordenadas dentro de Tijuana
+df = df[
+    (df["Latitud"] >= 32.41) & (df["Latitud"] <= 32.63) &
+    (df["Longitud"] >= -117.17) & (df["Longitud"] <= -116.86)
+].reset_index(drop=True)
+
+# ✅ Eliminar tiendas de autoservicio y no restaurantes
+tiendas_no_restaurantes = [
+    "oxxo", "7-eleven", "soriana", "calimax", "aprecio", "ley",
+    "the home depot", "costco", "walmart", "sam's club", "chedraui", "modelorama"
+]
+
+# Eliminar registros cuyo nombre contenga cualquiera de estas palabras
+df = df[~df["Nombre"].str.lower().str.contains('|'.join(tiendas_no_restaurantes))].reset_index(drop=True)
+
+# ✅ Recalcular el puntaje
 df["Puntaje"] = df["Calificación"] * np.log1p(df["Número de Opiniones"])
 df["Puntaje Normalizado"] = 5 * (df["Puntaje"] - df["Puntaje"].min()) / (df["Puntaje"].max() - df["Puntaje"].min())
 
-# ✅ Selección de top restaurantes
-top_15_restaurantes = df.nlargest(15, "Puntaje Normalizado")
-top_100_restaurantes = df.nlargest(100, "Puntaje Normalizado")
+# ✅ Definir el Top 15 y Top 100 actualizado
+top_15_restaurantes = df.nlargest(15, "Puntaje Normalizado").reset_index(drop=True)
+top_100_restaurantes = df.nlargest(100, "Puntaje Normalizado").reset_index(drop=True)
+
+print(f"✅ Dataset limpio con {len(df)} registros.")
+print(f"✅ Top 15 calculado con {len(top_15_restaurantes)} registros.")
+print(f"✅ Top 100 calculado con {len(top_100_restaurantes)} registros.")
+
 
 # ✅ Configuración del Dashboard
 st.set_page_config(page_title="Dashboard Restaurantes Tijuana", layout="wide")
@@ -38,7 +61,7 @@ st.markdown("""
 Este gráfico muestra los **15 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
 """)
 
-fig1, ax1 = plt.subplots(figsize=(16, 8))
+fig1, ax1 = plt.subplots(figsize=(8, 4))
 colors = sns.color_palette("Blues", n_colors=15)
 sns.barplot(
     data=top_15_restaurantes.sort_values(by="Puntaje Normalizado"),
@@ -70,7 +93,7 @@ st.markdown("""
 Aquí se visualiza la **frecuencia de las calificaciones** de los restaurantes, lo que permite entender cómo se distribuyen las valoraciones dentro de la ciudad.
 """)
 
-fig2, ax2 = plt.subplots(figsize=(16, 8))
+fig2, ax2 = plt.subplots(figsize=(8, 4))
 sns.histplot(df["Calificación"], bins=20, kde=True, color="#1f77b4", edgecolor="white", alpha=0.8)
 ax2.set_title("Distribución de Calificaciones de Restaurantes", fontsize=20, fontweight="bold", color="white")
 ax2.set_xlabel("Calificación", fontsize=14, color="white")
@@ -90,7 +113,7 @@ st.markdown("""
 Relación entre la **calificación** y el **número de opiniones** de los 100 mejores restaurantes, resaltando cómo las calificaciones se comportan según la popularidad.
 """)
 
-fig3, ax3 = plt.subplots(figsize=(14, 8))
+fig3, ax3 = plt.subplots(figsize=(7, 4))
 scatter = ax3.scatter(
     top_100_restaurantes["Calificación"],
     top_100_restaurantes["Número de Opiniones"],
