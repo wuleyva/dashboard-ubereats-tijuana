@@ -6,6 +6,16 @@ import folium
 from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 
+
+# ✅ Cargar el dataset
+df = pd.read_csv("restaurantes_ubereats_tijuana_final_v4.csv")
+
+# ✅ Procesar los datos
+df["Número de Opiniones"] = df["Número de Opiniones"].replace({r"\+": "", ",": ""}, regex=True).astype(float)
+df["Puntaje"] = df["Calificación"] * np.log1p(df["Número de Opiniones"])
+df["Puntaje Normalizado"] = 5 * (df["Puntaje"] - df["Puntaje"].min()) / (df["Puntaje"].max() - df["Puntaje"].min())
+
+
 # ✅ Configuración general
 st.set_page_config(page_title="Dashboard Restaurantes UberEats Tijuana", layout="wide")
 plt.style.use("dark_background")
