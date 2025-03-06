@@ -4,106 +4,121 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import folium
-from streamlit_folium import st_folium
 from folium.plugins import HeatMap
-import os
+from streamlit_folium import st_folium
 
-# 📌 Cargar el dataset asegurando la ruta correcta
-file_path = os.path.join(os.path.dirname(__file__), "restaurantes_ubereats_tijuana_final_v4.csv")
-df = pd.read_csv(file_path)
+# ✅ Cargar dataset
+df = pd.read_csv("restaurantes_ubereats_tijuana_final_v4.csv")
 
-# ✅ Limpiar la columna 'Número de Opiniones' (quitar + y ,)
-df["Número de Opiniones"] = df["Número de Opiniones"].replace({r"\+": "", ",": ""}, regex=True).astype(float)
+# ✅ Limpieza
+df["Número de Opiniones"] = pd.to_numeric(df["Número de Opiniones"], errors="coerce")
+df["Calificación"] = pd.to_numeric(df["Calificación"], errors="coerce")
+df["Latitud"] = pd.to_numeric(df["Latitud"], errors="coerce")
+df["Longitud"] = pd.to_numeric(df["Longitud"], errors="coerce")
+df = df.dropna(subset=["Número de Opiniones", "Calificación", "Latitud", "Longitud"])
 
-# ✅ Calcular puntaje ponderado basado en calificación y número de opiniones
+# ✅ Puntaje ponderado
 df["Puntaje"] = df["Calificación"] * np.log1p(df["Número de Opiniones"])
 df["Puntaje Normalizado"] = 5 * (df["Puntaje"] - df["Puntaje"].min()) / (df["Puntaje"].max() - df["Puntaje"].min())
 
-# ✅ Seleccionar los 15 y 100 mejores restaurantes según el puntaje ponderado
+# ✅ Top 15 restaurantes
 top_15_restaurantes = df.nlargest(15, "Puntaje Normalizado").reset_index(drop=True)
-top_100_restaurantes = df.nlargest(100, "Puntaje Normalizado")
+top_15_restaurantes.index = top_15_restaurantes.index + 1
 
-# 📌 Agregar ranking del 1 al 15
-top_15_restaurantes.insert(0, "Ranking", range(1, 16))
+# ✅ Dashboard
+st.set_page_config(layout="wide")
+st.title("📊 Dashboard de Restaurantes UberEats Tijuana")
 
-# 📌 Iniciar el Dashboard
-st.title("📊 Dashboard de Restaurantes en UberEats - Tijuana")
+# 🔹 Descripción Gráfico de Barras
+st.markdown("""
+### 🏆 Top 15 Restaurantes Mejor Calificados
+Este gráfico muestra los 15 mejores restaurantes de Tijuana según su puntaje ponderado, 
+que combina la calificación del usuario con la cantidad de opiniones recibidas. 
+Se usa una escala de tonos azules para resaltar las diferencias de puntuación.
+""")
 
-# 🔹 Sección 1: Top 15 Restaurantes por Puntaje
-st.header("🏆 Top 15 Restaurantes Mejor Calificados")
-st.write(
-    "Este gráfico muestra los **15 mejores restaurantes** en UberEats de Tijuana, "
-    "ordenados según su **calificación** y **cantidad de opiniones**. "
-    "El puntaje ponderado considera ambos factores para destacar los restaurantes "
-    "más confiables y populares."
+# 🔹 Gráfico de barras (Tonos Azules)
+fig_bar, ax_bar = plt.subplots(figsize=(16, 8))
+colors = sns.color_palette("Blues", n_colors=15)
+bars = sns.barplot(
+    data=top_15_restaurantes.sort_values(by="Puntaje Normalizado", ascending=True),
+    x="Nombre",
+    y="Puntaje Normalizado",
+    palette=colors,
+    ax=ax_bar
 )
+for i, valor in enumerate(top_15_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
+    ax_bar.text(i, valor + 0.05, f"{valor:.2f}", ha='center', va='bottom', fontsize=12, color='white')
+ax_bar.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana (Tonos Azules)", fontsize=20, fontweight="bold", color="white")
+ax_bar.set_xlabel("")
+ax_bar.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=14, color="white")
+ax_bar.set_facecolor("#222222")
+fig_bar.patch.set_facecolor("#222222")
+ax_bar.tick_params(axis='x', rotation=45, labelsize=12, colors='white')
+ax_bar.tick_params(axis='y', labelsize=12, colors='white')
+ax_bar.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
+st.pyplot(fig_bar)
 
-fig, ax = plt.subplots(figsize=(12, 7))
-sns.barplot(
-    data=top_15_restaurantes.sort_values(by="Puntaje Normalizado", ascending=False),
-    x="Puntaje Normalizado",
-    y="Nombre",
-    palette="magma",
-    hue=None,
-    legend=False
+# 🔹 Descripción Histograma
+st.markdown("""
+### 📌 Distribución de Calificaciones
+En este histograma observamos cómo se distribuyen las calificaciones de los restaurantes en Tijuana.
+Nos ayuda a entender si la mayoría de los locales tienen buenas evaluaciones o si hay muchas calificaciones bajas.
+""")
+
+# 🔹 Histograma de calificaciones
+fig_hist, ax_hist = plt.subplots(figsize=(12, 6))
+sns.histplot(df["Calificación"], bins=20, kde=True, color="royalblue", edgecolor="white", alpha=0.9, ax=ax_hist)
+ax_hist.set_title("Distribución de Calificaciones de Restaurantes", fontsize=20, color='white')
+ax_hist.set_xlabel("Calificación", fontsize=14, color='white')
+ax_hist.set_ylabel("Frecuencia", fontsize=14, color='white')
+ax_hist.set_facecolor("#222222")
+fig_hist.patch.set_facecolor("#222222")
+ax_hist.tick_params(axis='x', colors='white')
+ax_hist.tick_params(axis='y', colors='white')
+ax_hist.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
+st.pyplot(fig_hist)
+
+# 🔹 Descripción Mapa de Calor
+st.markdown("""
+### 📍 Mapa de Calor de Restaurantes
+El mapa resalta las zonas con mayor concentración de restaurantes dentro de Tijuana.
+Las áreas con colores más cálidos (rojo, naranja) indican zonas con más presencia de locales.
+""")
+
+# 🔹 Mapa de calor estilo dark
+heat_data = df[["Latitud", "Longitud"]].dropna().values.tolist()
+gradient_dark = {
+    0.2: "blue",
+    0.4: "purple",
+    0.6: "orange",
+    0.8: "red",
+    1.0: "yellow"
+}
+m = folium.Map(
+    location=[32.5149, -117.0382],
+    zoom_start=12,
+    tiles="CartoDB dark_matter"
 )
-ax.set_title("Top 15 Restaurantes por Puntaje Ponderado (Normalizado 0 a 5)")
-ax.set_xlabel("Puntaje Ponderado (0 a 5)")
-ax.set_ylabel("Restaurante")
-st.pyplot(fig)
-
-# 🔹 Sección 2: Histograma - Frecuencia de Calificaciones
-st.header("📊 Distribución de Calificaciones")
-
-st.write(
-    "Este histograma muestra la distribución de las calificaciones otorgadas "
-    "a los restaurantes en Uber Eats dentro de Tijuana. La mayoría de los restaurantes "
-    "tienen calificaciones entre 4.0 y 4.8, lo que indica un alto nivel de satisfacción "
-    "entre los clientes. La curva de densidad (línea azul) permite visualizar "
-    "la tendencia general de las puntuaciones."
-)
-
-
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.histplot(df["Calificación"], bins=20, kde=True, color="royalblue", edgecolor="black", alpha=0.7)
-
-ax.set_title("Distribución de Calificaciones de los Restaurantes", fontsize=14, fontweight="bold")
-ax.set_xlabel("Calificación", fontsize=12)
-ax.set_ylabel("Frecuencia", fontsize=12)
-ax.grid(axis="y", linestyle="--", alpha=0.7)
-
-st.pyplot(fig)
-
-
-# 🔹 Sección 3: Mapa de Calor de Restaurantes en Tijuana
-st.header("📍 Mapa de Calor de Restaurantes en Tijuana")
-st.write(
-    "El mapa de calor muestra la **distribución geográfica** de los restaurantes en Tijuana. "
-    "Las zonas con más restaurantes aparecerán más resaltadas, mientras que las menos densas "
-    "tendrán colores más suaves."
-)
-
-# 📍 Crear el mapa centrado en Tijuana con un zoom adecuado
-m = folium.Map(location=[32.5149, -117.0382], zoom_start=12)
-
-# Filtrar coordenadas dentro del área de Tijuana
-df_tijuana = df[
-    (df["Latitud"] >= 32.41) & (df["Latitud"] <= 32.63) &
-    (df["Longitud"] >= -117.17) & (df["Longitud"] <= -116.86)
-]
-
-# ✅ Agregar HeatMap solo si hay coordenadas
-if not df_tijuana.empty:
-    heat_data = df_tijuana[["Latitud", "Longitud"]].values.tolist()
-    HeatMap(heat_data, radius=12, blur=15, max_zoom=1).add_to(m)
-    st_folium(m, width=700, height=500)  # Ajusta tamaño del mapa
+if heat_data:
+    HeatMap(
+        heat_data,
+        gradient=gradient_dark,
+        radius=15,
+        blur=20,
+        max_zoom=1
+    ).add_to(m)
+    st_folium(m, width=1000, height=600)
 else:
-    st.warning("⚠️ No se encontraron coordenadas dentro de Tijuana.")
+    st.warning("❌ No hay datos válidos para el mapa.")
 
-# 🔹 Mostrar el Dataset Filtrado con ranking del 1 al 15
-st.header("📋 Datos de Restaurantes Filtrados")
-st.write(
-    "La siguiente tabla muestra los **15 mejores restaurantes** con sus calificaciones, "
-    "número de opiniones y puntaje normalizado."
-)
-st.dataframe(top_15_restaurantes[["Ranking", "Nombre", "Número de Opiniones", "Calificación", "Puntaje Normalizado"]])
+# 🔹 Descripción de tabla
+st.markdown("""
+### 📋 Tabla Top 15 Restaurantes
+Aquí puedes ver el detalle del Top 15 con sus respectivas calificaciones, número de opiniones y puntaje normalizado.
+""")
+
+# 🔹 Mostrar Top 15 restaurantes
+st.dataframe(top_15_restaurantes[["Nombre", "Número de Opiniones", "Calificación", "Puntaje Normalizado"]].style.set_properties(**{'background-color': '#111111', 'color': 'white'}))
+
+
