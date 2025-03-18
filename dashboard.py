@@ -136,9 +136,7 @@ ax3.pie(
     wedgeprops={"edgecolor": "white", "linewidth": 1.2}
 )
 
-# ✅ Cambiar el color de las etiquetas manualmente
-for text in categorias:
-    text.set_color("white")  # 🔹 Establecer color de las categorías en blanco
+
     
 ax3.set_title("Distribución de Categorías", fontsize=10, fontweight="bold", color="white")
 fig3.patch.set_facecolor("#222222")
