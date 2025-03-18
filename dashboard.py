@@ -53,8 +53,7 @@ st.markdown("""
 Este gráfico muestra los **10 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
 """)
 
-# 🔹 Crear la figura con los restaurantes en el eje vertical
-fig1, ax1 = plt.subplots(figsize=(2.5, 3))  # 🔽 Gráfico vertical y más compacto
+fig1, ax1 = plt.subplots(figsize=(2.5, 3))  
 
 # 🔹 Estilo del gráfico con marcos
 colors = sns.color_palette("Blues", n_colors=10)
@@ -65,14 +64,12 @@ sns.barplot(
     palette=colors,
     ax=ax1,
     alpha=0.9,
-    edgecolor="white"  # 🔹 Bordes en cada barra
+    edgecolor="white"
 )
 
-# 🔹 Agregar valores en cada barra
 for i, valor in enumerate(top_10_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
     ax1.text(valor + 0.05, i, f"{valor:.2f}", ha='left', va='center', fontsize=5, color='white')
 
-# 🔹 Agregar un marco al gráfico
 for spine in ax1.spines.values():
     spine.set_edgecolor('white')
     spine.set_linewidth(1.2)
@@ -89,28 +86,37 @@ ax1.grid(axis='x', linestyle='--', alpha=0.3, color='gray')
 st.pyplot(fig1)
 
 # ----------------------------------------------------------------------------------------
-# 🔹 Gráfico 2: Histograma de Calificaciones
-st.header("📊 Distribución de Calificaciones")
+# 🔹 Gráfico 2: Gráfico de Dispersión - Calificación vs Opiniones
+st.header("📌 Calificación vs Número de Opiniones")
 
-st.markdown("""
-Aquí se visualiza la **frecuencia de las calificaciones** de los restaurantes, lo que permite entender cómo se distribuyen las valoraciones dentro de la ciudad.
-""")
-
-fig2, ax2 = plt.subplots(figsize=(4, 3))
-sns.histplot(df["Calificación"], bins=20, kde=True, color="blue", edgecolor="white", alpha=0.8)
+fig2, ax2 = plt.subplots(figsize=(5, 3))
+scatter = ax2.scatter(
+    top_100_restaurantes["Calificación"],
+    top_100_restaurantes["Número de Opiniones"],
+    c=top_100_restaurantes["Puntaje Normalizado"],
+    cmap="Blues",
+    s=50,
+    edgecolor="white",
+    alpha=0.9
+)
 
 for spine in ax2.spines.values():
     spine.set_edgecolor('white')
     spine.set_linewidth(1.2)
 
-ax2.set_title("Distribución de Calificaciones", fontsize=10, fontweight="bold", color="white")
+cbar = plt.colorbar(scatter)
+cbar.set_label("Puntaje Normalizado", color="white")
+cbar.ax.yaxis.set_tick_params(color="white")
+plt.setp(plt.getp(cbar.ax.axes, "yticklabels"), color="white")
+
+ax2.set_title("Calificación vs Número de Opiniones", fontsize=10, fontweight="bold", color="white")
 ax2.set_xlabel("Calificación", fontsize=8, color="white")
-ax2.set_ylabel("Frecuencia", fontsize=8, color="white")
+ax2.set_ylabel("Número de Opiniones", fontsize=8, color="white")
 ax2.set_facecolor("#222222")
 fig2.patch.set_facecolor("#222222")
-ax2.tick_params(axis='x', labelsize=6, colors='white')
-ax2.tick_params(axis='y', labelsize=6, colors='white')
-ax2.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
+ax2.tick_params(axis="x", labelsize=6, colors="white")
+ax2.tick_params(axis="y", labelsize=6, colors="white")
+ax2.grid(True, linestyle="--", alpha=0.3, color="gray")
 
 st.pyplot(fig2)
 
@@ -118,25 +124,22 @@ st.pyplot(fig2)
 # 🔹 Gráfico 3: Gráfico de Pastel - Distribución de Categorías
 st.header("🍽️ Categorías de Restaurantes en Tijuana")
 
-st.markdown("""
-Este gráfico muestra la **distribución de los tipos de restaurantes** en Tijuana según las categorías de UberEats.
-""")
+fig3, ax3 = plt.subplots(figsize=(4, 4))
+categorias = df["Categoría"].value_counts().nlargest(6)  
 
-fig4, ax4 = plt.subplots(figsize=(4, 4))
-categorias = df["Categoría"].value_counts().nlargest(6)  # 🔹 Tomamos las 6 categorías más comunes
-ax4.pie(
+ax3.pie(
     categorias,
-    labels=categorias.index,
-    autopct='%1.1f%%',
+    labels=[c.capitalize() for c in categorias.index],
+    autopct='%1.0f%%',
     startangle=140,
     colors=sns.color_palette("coolwarm", len(categorias)),
-    wedgeprops={"edgecolor": "white", "linewidth": 1.2}  # 🔹 Bordes blancos
+    wedgeprops={"edgecolor": "white", "linewidth": 1.2}
 )
 
-ax4.set_title("Distribución de Categorías de Restaurantes", fontsize=10, fontweight="bold", color="white")
-fig4.patch.set_facecolor("#222222")
+ax3.set_title("Distribución de Categorías", fontsize=10, fontweight="bold", color="white")
+fig3.patch.set_facecolor("#222222")
 
-st.pyplot(fig4)
+st.pyplot(fig3)
 
 # ----------------------------------------------------------------------------------------
 # 🔹 Mapa de Calor
