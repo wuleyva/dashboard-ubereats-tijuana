@@ -64,8 +64,8 @@ Este gráfico muestra los **10 restaurantes mejor calificados** en Tijuana segú
 # 🔹 Filtrar solo el Top 10
 top_10_restaurantes = top_15_restaurantes.nlargest(10, "Puntaje Normalizado")
 
-# 🔹 Tamaño aún más reducido
-fig1, ax1 = plt.subplots(figsize=(2, 1))  # 🔽 🔽 🔽 Más compacto
+# 🔹 Reducción del tamaño del gráfico
+fig1, ax1 = plt.subplots(figsize=(3, 1.5))  # Tamaño súper reducido
 
 # 🔹 Estilo del gráfico
 colors = sns.color_palette("Blues", n_colors=10)
@@ -78,22 +78,22 @@ sns.barplot(
     alpha=0.9
 )
 
-# 🔹 Agregar los valores encima de las barras con más espacio
+# 🔹 Agregar los valores encima de las barras
 for i, valor in enumerate(top_10_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
-    ax1.text(i, valor + 0.1, f"{valor:.2f}", ha='center', va='bottom', fontsize=4, color='white')
+    ax1.text(i, valor + 0.02, f"{valor:.2f}", ha='center', va='bottom', fontsize=5, color='white')
 
 # 🔹 Ajustar títulos y etiquetas
-ax1.set_title("Top 10 Restaurantes Mejor Calificados", fontsize=6, fontweight="bold", color="white")
+ax1.set_title("Top 10 Restaurantes Mejor Calificados", fontsize=7, fontweight="bold", color="white")
 ax1.set_xlabel("")
-ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=5, color="white")
+ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=6, color="white")
 
 # 🔹 Ajustar etiquetas del eje X para evitar solapamiento
-ax1.set_xticklabels(ax1.get_xticklabels(), rotation=40, ha="right", fontsize=4, color="white")
+ax1.set_xticklabels(ax1.get_xticklabels(), rotation=35, ha="right", fontsize=5, color="white")
 
 # 🔹 Fondo oscuro y ajuste de líneas de referencia
 ax1.set_facecolor("#222222")
 fig1.patch.set_facecolor("#222222")
-ax1.tick_params(axis='y', labelsize=4, colors='white')
+ax1.tick_params(axis='y', labelsize=5, colors='white')
 ax1.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
 
 # 🔹 Mostrar en Streamlit
