@@ -121,43 +121,25 @@ ax2.grid(True, linestyle="--", alpha=0.3, color="gray")
 st.pyplot(fig2)
 
 # ----------------------------------------------------------------------------------------
-# 🔹 Gráfico 3: Distribución de Categorías
-st.header("📊 Distribución de Categorías")
+# 🔹 Gráfico 3: Gráfico de Pastel - Distribución de Categorías
+st.header("🍽️ Categorías de Restaurantes en Tijuana")
 
-st.markdown("""
-Este gráfico de pastel muestra la **distribución de los restaurantes** según su categoría en UberEats Tijuana.
-""")
+fig3, ax3 = plt.subplots(figsize=(4, 4))
+categorias = df["Categoría"].value_counts().nlargest(6)  
 
-# ✅ Contar la cantidad de restaurantes por categoría
-categoria_counts = df["Categoría"].value_counts()
-
-# ✅ Configurar la paleta de colores y ajustar etiquetas
-colors = sns.color_palette("coolwarm", len(categoria_counts))
-
-fig5, ax5 = plt.subplots(figsize=(4, 4))
-wedges, texts, autotexts = ax5.pie(
-    categoria_counts,
-    labels=categoria_counts.index,
+ax3.pie(
+    categorias,
+    labels=[c.capitalize() for c in categorias.index],
     autopct='%1.0f%%',
-    colors=colors,
     startangle=140,
-    wedgeprops={"edgecolor": "white"},
-    textprops={'fontsize': 10, 'color': 'white'}  # 🔹 Color de textos en blanco
+    colors=sns.color_palette("coolwarm", len(categorias)),
+    wedgeprops={"edgecolor": "white", "linewidth": 1.2}
 )
 
-# ✅ Cambiar el color de las etiquetas manualmente
-for text in texts:
-    text.set_color("white")  # 🔹 Establecer color de las categorías en blanco
+ax3.set_title("Distribución de Categorías", fontsize=10, fontweight="bold", color="white")
+fig3.patch.set_facecolor("#222222")
 
-# ✅ Ajustar el título
-ax5.set_title("Distribución de Categorías", fontsize=12, fontweight="bold", color="white")
-
-# ✅ Fondo oscuro
-fig5.patch.set_facecolor("#222222")
-
-# ✅ Mostrar en Streamlit
-st.pyplot(fig5)
-
+st.pyplot(fig3)
 
 # ----------------------------------------------------------------------------------------
 # 🔹 Mapa de Calor
