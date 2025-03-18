@@ -61,7 +61,7 @@ st.markdown("""
 Este gráfico muestra los **15 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
 """)
 
-fig1, ax1 = plt.subplots(figsize=(10, 5))
+fig1, ax1 = plt.subplots(figsize=(7, 4))
 colors = sns.color_palette("Blues", n_colors=15)
 sns.barplot(
     data=top_15_restaurantes.sort_values(by="Puntaje Normalizado"),
@@ -80,8 +80,8 @@ ax1.set_xlabel("")
 ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=14, color="white")
 ax1.set_facecolor("#222222")
 fig1.patch.set_facecolor("#222222")
-ax1.tick_params(axis='x', rotation=45, labelsize=10, colors='white')
-ax1.tick_params(axis='y', labelsize=10, colors='white')
+ax1.tick_params(axis='x', rotation=45, labelsize=6, colors='white')
+ax1.tick_params(axis='y', labelsize=6, colors='white')
 ax1.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
 st.pyplot(fig1)
 
