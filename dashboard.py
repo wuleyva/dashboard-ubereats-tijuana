@@ -61,8 +61,11 @@ st.markdown("""
 Este gráfico muestra los **15 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
 """)
 
-fig1, ax1 = plt.subplots(figsize=(7, 4))
+# 🔹 Ajuste del tamaño del gráfico para mejor visualización
+fig1, ax1 = plt.subplots(figsize=(6, 3))  # Reducido de (7,4) a (6,3)
 colors = sns.color_palette("Blues", n_colors=15)
+
+# 🔹 Creación del gráfico de barras
 sns.barplot(
     data=top_15_restaurantes.sort_values(by="Puntaje Normalizado"),
     x="Nombre",
@@ -72,18 +75,27 @@ sns.barplot(
     alpha=0.9
 )
 
+# 🔹 Agregar los valores encima de las barras con mejor alineación
 for i, valor in enumerate(top_15_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
-    ax1.text(i, valor + 0.05, f"{valor:.2f}", ha='center', va='bottom', fontsize=6, color='white')
+    ax1.text(i, valor + 0.03, f"{valor:.2f}", ha='center', va='bottom', fontsize=8, color='white')
 
-ax1.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana", fontsize=12, fontweight="bold", color="white")
+# 🔹 Títulos y etiquetas ajustadas
+ax1.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana", fontsize=10, fontweight="bold", color="white")
 ax1.set_xlabel("")
-ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=14, color="white")
+ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=10, color="white")
+
+# 🔹 Ajustar la visualización de etiquetas en el eje X
+ax1.set_xticklabels(ax1.get_xticklabels(), rotation=25, ha="right", fontsize=8, color="white")
+
+# 🔹 Fondo oscuro y ajustes de líneas de referencia
 ax1.set_facecolor("#222222")
 fig1.patch.set_facecolor("#222222")
-ax1.tick_params(axis='x', rotation=45, labelsize=6, colors='white')
-ax1.tick_params(axis='y', labelsize=6, colors='white')
+ax1.tick_params(axis='y', labelsize=8, colors='white')
 ax1.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
+
+# 🔹 Mostrar el gráfico en Streamlit
 st.pyplot(fig1)
+
 
 # ----------------------------------------------------------------------------------------
 # 🔹 Gráfico 2: Histograma de Calificaciones
