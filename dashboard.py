@@ -61,7 +61,7 @@ st.markdown("""
 Este gráfico muestra los **15 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
 """)
 
-fig1, ax1 = plt.subplots(figsize=(8, 6))
+fig1, ax1 = plt.subplots(figsize=(10, 5))
 colors = sns.color_palette("Blues", n_colors=15)
 sns.barplot(
     data=top_15_restaurantes.sort_values(by="Puntaje Normalizado"),
