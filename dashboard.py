@@ -54,20 +54,23 @@ st.set_page_config(page_title="Dashboard Restaurantes Tijuana", layout="wide")
 st.title("📊 Dashboard de Restaurantes en UberEats - Tijuana")
 
 # ----------------------------------------------------------------------------------------
-# 🔹 Gráfico 1: Top 15 Restaurantes Mejor Calificados
-st.header("🏆 Top 15 Restaurantes Mejor Calificados")
+# 🔹 Gráfico 1: Top 10 Restaurantes Mejor Calificados
+st.header("🏆 Top 10 Restaurantes Mejor Calificados")
 
 st.markdown("""
-Este gráfico muestra los **15 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
+Este gráfico muestra los **10 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
 """)
 
-# 🔹 Ajuste del tamaño del gráfico para mejor visualización
-fig1, ax1 = plt.subplots(figsize=(6, 3))  # Reducido de (7,4) a (6,3)
-colors = sns.color_palette("Blues", n_colors=15)
+# 🔹 Filtrar solo el Top 10
+top_10_restaurantes = top_15_restaurantes.nlargest(10, "Puntaje Normalizado")
 
-# 🔹 Creación del gráfico de barras
+# 🔹 Reducción del tamaño del gráfico
+fig1, ax1 = plt.subplots(figsize=(3, 1.5))  # Tamaño súper reducido
+
+# 🔹 Estilo del gráfico
+colors = sns.color_palette("Blues", n_colors=10)
 sns.barplot(
-    data=top_15_restaurantes.sort_values(by="Puntaje Normalizado"),
+    data=top_10_restaurantes.sort_values(by="Puntaje Normalizado"),
     x="Nombre",
     y="Puntaje Normalizado",
     palette=colors,
@@ -75,26 +78,27 @@ sns.barplot(
     alpha=0.9
 )
 
-# 🔹 Agregar los valores encima de las barras con mejor alineación
-for i, valor in enumerate(top_15_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
-    ax1.text(i, valor + 0.03, f"{valor:.2f}", ha='center', va='bottom', fontsize=8, color='white')
+# 🔹 Agregar los valores encima de las barras
+for i, valor in enumerate(top_10_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
+    ax1.text(i, valor + 0.02, f"{valor:.2f}", ha='center', va='bottom', fontsize=5, color='white')
 
-# 🔹 Títulos y etiquetas ajustadas
-ax1.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana", fontsize=10, fontweight="bold", color="white")
+# 🔹 Ajustar títulos y etiquetas
+ax1.set_title("Top 10 Restaurantes Mejor Calificados", fontsize=7, fontweight="bold", color="white")
 ax1.set_xlabel("")
-ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=10, color="white")
+ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=6, color="white")
 
-# 🔹 Ajustar la visualización de etiquetas en el eje X
-ax1.set_xticklabels(ax1.get_xticklabels(), rotation=25, ha="right", fontsize=8, color="white")
+# 🔹 Ajustar etiquetas del eje X para evitar solapamiento
+ax1.set_xticklabels(ax1.get_xticklabels(), rotation=35, ha="right", fontsize=5, color="white")
 
-# 🔹 Fondo oscuro y ajustes de líneas de referencia
+# 🔹 Fondo oscuro y ajuste de líneas de referencia
 ax1.set_facecolor("#222222")
 fig1.patch.set_facecolor("#222222")
-ax1.tick_params(axis='y', labelsize=8, colors='white')
+ax1.tick_params(axis='y', labelsize=5, colors='white')
 ax1.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
 
-# 🔹 Mostrar el gráfico en Streamlit
+# 🔹 Mostrar en Streamlit
 st.pyplot(fig1)
+
 
 
 # ----------------------------------------------------------------------------------------
