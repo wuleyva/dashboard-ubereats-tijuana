@@ -90,8 +90,9 @@ st.pyplot(fig1)
 # 🔹 Gráfico 2: Gráfico de Dispersión - Calificación vs Opiniones
 st.header("📌 Calificación vs Número de Opiniones")
 st.markdown("""
-Un **histograma** que muestra cómo se distribuyen las calificaciones de los restaurantes.  
-  Nos ayuda a entender si la mayoría de los restaurantes tienen buenas calificaciones o si hay mucha variabilidad.
+Un gráfico de dispersión que **relaciona la calificación con el número de opiniones**.  
+  Sirve para analizar si los restaurantes con más opiniones suelen tener mejores calificaciones o no.
+
 """)
 
 fig2, ax2 = plt.subplots(figsize=(5, 3))
