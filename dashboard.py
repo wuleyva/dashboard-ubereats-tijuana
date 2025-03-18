@@ -50,7 +50,8 @@ st.title("📊 Dashboard de Restaurantes en UberEats - Tijuana")
 st.header("🏆 Top 10 Restaurantes Mejor Calificados")
 
 st.markdown("""
-Este gráfico muestra los **10 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
+Muestra los **10 restaurantes con mejor puntaje** basado en la calificación y el número de opiniones.  
+  Permite identificar cuáles son los lugares mejor valorados en UberEats Tijuana.
 """)
 
 fig1, ax1 = plt.subplots(figsize=(2.5, 3))  
@@ -88,6 +89,10 @@ st.pyplot(fig1)
 # ----------------------------------------------------------------------------------------
 # 🔹 Gráfico 2: Gráfico de Dispersión - Calificación vs Opiniones
 st.header("📌 Calificación vs Número de Opiniones")
+st.markdown("""
+Un **histograma** que muestra cómo se distribuyen las calificaciones de los restaurantes.  
+  Nos ayuda a entender si la mayoría de los restaurantes tienen buenas calificaciones o si hay mucha variabilidad.
+""")
 
 fig2, ax2 = plt.subplots(figsize=(5, 3))
 scatter = ax2.scatter(
@@ -124,7 +129,8 @@ st.pyplot(fig2)
 # 🔹 Gráfico 3: Gráfico de Pastel - Distribución de Categorías
 st.header("🍽️ Categorías de Restaurantes en Tijuana")
 st.markdown("""
-Este gráfico de pastel muestra la **distribución de los restaurantes** según su categoría en UberEats Tijuana.
+ Un gráfico de pastel que muestra **las categorías de restaurantes más comunes** en UberEats Tijuana.  
+  Ayuda a visualizar qué tipo de comida predomina en la plataforma.
 """)
 
 fig3, ax3 = plt.subplots(figsize=(4, 4))
@@ -152,11 +158,39 @@ fig3.patch.set_facecolor("#222222")
 # 🔹 Mostrar en Streamlit
 st.pyplot(fig3)
 
+#-----------------------------------------------------------------------------------------
+# 🔹 Gráfico 4: Histograma de Calificaciones
+st.header("📊 Distribución de Calificaciones")
 
+st.markdown("""
+Un **histograma** que muestra cómo se distribuyen las calificaciones de los restaurantes.  
+  Nos ayuda a entender si la mayoría de los restaurantes tienen buenas calificaciones o si hay mucha variabilidad.0
+""")
+
+fig2, ax2 = plt.subplots(figsize=(4, 3))
+sns.histplot(df["Calificación"], bins=20, kde=True, color="blue", edgecolor="white", alpha=0.8)
+
+for spine in ax2.spines.values():
+    spine.set_edgecolor('white')
+    spine.set_linewidth(1.2)
+
+ax2.set_title("Distribución de Calificaciones", fontsize=10, fontweight="bold", color="white")
+ax2.set_xlabel("Calificación", fontsize=8, color="white")
+ax2.set_ylabel("Frecuencia", fontsize=8, color="white")
+ax2.set_facecolor("#222222")
+fig2.patch.set_facecolor("#222222")
+ax2.tick_params(axis='x', labelsize=6, colors='white')
+ax2.tick_params(axis='y', labelsize=6, colors='white')
+ax2.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
+
+st.pyplot(fig2)
 # ----------------------------------------------------------------------------------------
 # 🔹 Mapa de Calor
 st.header("📍 Mapa de Calor de Restaurantes en Tijuana")
-
+st.markdown("""
+Representa la **concentración geográfica** de restaurantes en Tijuana mediante un heatmap.  
+  Muestra en qué zonas de la ciudad hay mayor densidad de restaurantes registrados.
+""")
 m = folium.Map(location=[32.5149, -117.0382], zoom_start=12, tiles="CartoDB dark_matter")
 heat_data = df[["Latitud", "Longitud"]].values.tolist()
 HeatMap(heat_data, radius=15, blur=20).add_to(m)
