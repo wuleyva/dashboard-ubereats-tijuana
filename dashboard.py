@@ -80,7 +80,7 @@ sns.barplot(
 
 # 🔹 Agregar los valores encima de las barras
 for i, valor in enumerate(top_10_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
-    ax1.text(i, valor + 0.02, f"{valor:.2f}", ha='center', va='bottom', fontsize=5, color='white')
+    ax1.text(i, valor + 0.02, f"{valor:.2f}", ha='center', va='bottom', fontsize=3, color='white')
 
 # 🔹 Ajustar títulos y etiquetas
 ax1.set_title("Top 10 Restaurantes Mejor Calificados", fontsize=7, fontweight="bold", color="white")
