@@ -123,25 +123,35 @@ st.pyplot(fig2)
 # ----------------------------------------------------------------------------------------
 # 🔹 Gráfico 3: Gráfico de Pastel - Distribución de Categorías
 st.header("🍽️ Categorías de Restaurantes en Tijuana")
+st.markdown("""
+Este gráfico de pastel muestra la **distribución de los restaurantes** según su categoría en UberEats Tijuana.
+""")
 
 fig3, ax3 = plt.subplots(figsize=(4, 4))
-categorias = df["Categoría"].value_counts().nlargest(6)  
+categorias = df["Categoría"].value_counts().nlargest(6)
 
-ax3.pie(
+# 🔹 Generar el gráfico de pastel
+wedges, texts, autotexts = ax3.pie(
     categorias,
     labels=[c.capitalize() for c in categorias.index],
     autopct='%1.0f%%',
     startangle=140,
     colors=sns.color_palette("coolwarm", len(categorias)),
-    wedgeprops={"edgecolor": "white", "linewidth": 1.2}
+    wedgeprops={"edgecolor": "white", "linewidth": 1.2},
+    textprops={'fontsize': 9, 'color': 'white'}  # 🔹 Color blanco para los textos
 )
 
+# 🔹 Asegurar que los nombres de las categorías sean blancos
+for text in texts:
+    text.set_color("white")
 
-    
+# 🔹 Ajustar el título y fondo
 ax3.set_title("Distribución de Categorías", fontsize=10, fontweight="bold", color="white")
 fig3.patch.set_facecolor("#222222")
 
+# 🔹 Mostrar en Streamlit
 st.pyplot(fig3)
+
 
 # ----------------------------------------------------------------------------------------
 # 🔹 Mapa de Calor
