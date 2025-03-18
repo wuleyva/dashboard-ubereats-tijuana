@@ -75,7 +75,7 @@ sns.barplot(
 for i, valor in enumerate(top_15_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
     ax1.text(i, valor + 0.05, f"{valor:.2f}", ha='center', va='bottom', fontsize=6, color='white')
 
-ax1.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana", fontsize=20, fontweight="bold", color="white")
+ax1.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana", fontsize=12, fontweight="bold", color="white")
 ax1.set_xlabel("")
 ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=14, color="white")
 ax1.set_facecolor("#222222")
