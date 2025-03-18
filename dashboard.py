@@ -61,7 +61,7 @@ st.markdown("""
 Este gráfico muestra los **15 restaurantes mejor calificados** en Tijuana según un puntaje ponderado que toma en cuenta tanto la calificación como el número de opiniones.
 """)
 
-fig1, ax1 = plt.subplots(figsize=(8, 4))
+fig1, ax1 = plt.subplots(figsize=(8, 6))
 colors = sns.color_palette("Blues", n_colors=15)
 sns.barplot(
     data=top_15_restaurantes.sort_values(by="Puntaje Normalizado"),
@@ -75,7 +75,7 @@ sns.barplot(
 for i, valor in enumerate(top_15_restaurantes.sort_values(by="Puntaje Normalizado")["Puntaje Normalizado"]):
     ax1.text(i, valor + 0.05, f"{valor:.2f}", ha='center', va='bottom', fontsize=12, color='white')
 
-ax1.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana (Tonos Azules)", fontsize=20, fontweight="bold", color="white")
+ax1.set_title("Top 15 Restaurantes Mejor Calificados en Tijuana", fontsize=20, fontweight="bold", color="white")
 ax1.set_xlabel("")
 ax1.set_ylabel("Puntaje Normalizado (0 a 5)", fontsize=14, color="white")
 ax1.set_facecolor("#222222")
@@ -93,7 +93,7 @@ st.markdown("""
 Aquí se visualiza la **frecuencia de las calificaciones** de los restaurantes, lo que permite entender cómo se distribuyen las valoraciones dentro de la ciudad.
 """)
 
-fig2, ax2 = plt.subplots(figsize=(8, 4))
+fig2, ax2 = plt.subplots(figsize=(8, 6))
 sns.histplot(df["Calificación"], bins=20, kde=True, color="#1f77b4", edgecolor="white", alpha=0.8)
 ax2.set_title("Distribución de Calificaciones de Restaurantes", fontsize=20, fontweight="bold", color="white")
 ax2.set_xlabel("Calificación", fontsize=14, color="white")
@@ -113,7 +113,7 @@ st.markdown("""
 Relación entre la **calificación** y el **número de opiniones** de los 100 mejores restaurantes, resaltando cómo las calificaciones se comportan según la popularidad.
 """)
 
-fig3, ax3 = plt.subplots(figsize=(7, 4))
+fig3, ax3 = plt.subplots(figsize=(7, 5))
 scatter = ax3.scatter(
     top_100_restaurantes["Calificación"],
     top_100_restaurantes["Número de Opiniones"],
